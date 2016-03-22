@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour {
 	public AudioManager audioManager;
 	public GameOverAnimation goAnimation;
 	public AdManager adManager;
+	public ArtManager artManager;
 	
 	int numSquares = 1;
 	
@@ -50,6 +51,8 @@ public class GameManager : MonoBehaviour {
 		for (int i = 0; i < transform.childCount; i++) {
 			squares[i] = transform.GetChild(i).gameObject;
 			squares[i].GetComponent<Square>().gameManager = this;
+			squares[i].transform.FindChild("Foreground").GetComponent<SquareArtManager>().artManager = artManager;
+			squares[i].transform.FindChild("Background").GetComponent<SquareArtManager>().artManager = artManager;
 		}
 		
 		int xIndex = 0;

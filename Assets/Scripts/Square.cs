@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Square : MonoBehaviour {
 
-//	[System.NonSerialized]
+	[System.NonSerialized]
 	public GameManager gameManager;
 
 	bool canBeHit = false;
@@ -16,6 +16,7 @@ public class Square : MonoBehaviour {
 	GameObject background;
 	
 	Vector3 originalScale;
+	Vector3 originalForegroundScale;
 	Vector3 defaultPosition;
 	
 	[System.NonSerialized]
@@ -24,16 +25,20 @@ public class Square : MonoBehaviour {
 
 	void Awake() {
 		originalScale = transform.localScale;
-		
+
 		foreground = transform.FindChild("Foreground").gameObject;
 		background = transform.FindChild("Background").gameObject;
-		
+
 		defaultPosition = transform.position;
 		
 		// Dividing this value by 2 because the animation is played at speed 2 (twice as fast)
 		popAnimationLength = foreground.GetComponent<Animator>().runtimeAnimatorController.animationClips[0].length/2;
 		
 		squareAnimationTime = popAnimationLength + scaleDuration;
+	}
+
+	void Start() {
+		originalForegroundScale = foreground.transform.localScale;
 	}
 	
 	public IEnumerator Setup(int num, float delay) {
@@ -46,8 +51,9 @@ public class Square : MonoBehaviour {
 		gameObject.ScaleTo(Vector3.zero, scaleDuration, 0);
 		
 		yield return new WaitForSeconds(scaleDuration);
-		
-		foreground.GetComponent<SpriteRenderer>().color = gameManager.colors[Random.Range(0, gameManager.colors.Length)];
+
+		foreground.GetComponent<SquareArtManager>().SetColor(gameManager.colors[Random.Range(0, gameManager.colors.Length)]);
+//		foreground.GetComponent<SpriteRenderer>().color = gameManager.colors[Random.Range(0, gameManager.colors.Length)];
 		gameObject.ScaleTo(originalScale, scaleDuration, 0);
 	}
 	
@@ -80,7 +86,8 @@ public class Square : MonoBehaviour {
 	}
 	
 	void CorrectHit() {
-		StartCoroutine("ScaleDown");
+		foreground.GetComponent<SquareArtManager>().HandleCorrectHit();
+//		StartCoroutine("ScaleDown");
 	}
 	
 	public IEnumerator ScaleDown() {
@@ -93,9 +100,12 @@ public class Square : MonoBehaviour {
 //		background.ScaleTo(Vector3.zero, scaleDuration, 0);
 		
 		yield return new WaitForSeconds(scaleDuration);
-		
-		foreground.GetComponent<SpriteRenderer>().color = gameManager.backgroundColor;
-		foreground.ScaleTo(Vector3.one, scaleDuration, 0);
+
+//		if(GetComponent<SpriteRenderer>().sprite == 
+		foreground.GetComponent<SquareArtManager>().SetColor(gameManager.backgroundColor);
+//		foreground.GetComponent<SpriteRenderer>().color = gameManager.backgroundColor;
+
+		foreground.ScaleTo(originalForegroundScale, scaleDuration, 0);
 //		background.ScaleTo(Vector3.one, scaleDuration, 0);
 		
 		transform.rotation = Quaternion.identity;
@@ -108,7 +118,8 @@ public class Square : MonoBehaviour {
 	
 	void Explode() {
 		background.transform.parent = null;
-		foreground.GetComponent<SpriteRenderer>().color = gameManager.colors[Random.Range(0, gameManager.colors.Length)];
+		foreground.GetComponent<SquareArtManager>().SetColor(gameManager.colors[Random.Range(0, gameManager.colors.Length)]);
+//		foreground.GetComponent<SpriteRenderer>().color = gameManager.colors[Random.Range(0, gameManager.colors.Length)];
 		background.GetComponent<SpriteRenderer>().sortingOrder = -1;
 		
 		Vector3 offset = new Vector3(Random.Range(-1f, 1f), Random.Range (-1f, 1f), 0);
@@ -127,7 +138,8 @@ public class Square : MonoBehaviour {
 		canBeHit = false;
 		nextSquare = false;
 		
-		foreground.GetComponent<SpriteRenderer>().color = gameManager.backgroundColor;
+//		foreground.GetComponent<SpriteRenderer>().color = gameManager.backgroundColor;
+		transform.localScale = Vector3.zero;
 	}
 	
 	void GameOver() {
