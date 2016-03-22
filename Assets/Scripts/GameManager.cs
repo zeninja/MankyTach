@@ -28,7 +28,8 @@ public class GameManager : MonoBehaviour {
 	public bool gameOver;
 		
 	[System.NonSerialized]
-	public int highestLevel = 0;
+	public int score = 0;
+	public int highScore = 0;
 	[System.NonSerialized]
 	public float totalTime = 0;
 	
@@ -173,7 +174,8 @@ public class GameManager : MonoBehaviour {
 	
 	public void HandleGameOver() {		
 		totalTime += Time.time - startTime;
-		highestLevel = numSquares;
+		score = numSquares;
+		StoreHighscore (score);
 		statManager.UpdateStats();
 		gameOver = true;
 		gameOverScreen.GetComponent<GameOverManager>().HandleGameOver();
@@ -249,4 +251,15 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	#endregion
+
+
+	void StoreHighscore(int newHighscore)
+	{
+		int oldHighscore = PlayerPrefs.GetInt ("highscore", 0);    
+		if (newHighscore > oldHighscore) {
+			PlayerPrefs.SetInt ("highscore", newHighscore);
+			PlayerPrefs.Save ();
+
+		}
+	}
 }
