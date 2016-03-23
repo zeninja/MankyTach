@@ -39,8 +39,6 @@ public class GameManager : MonoBehaviour {
 	bool started = false;
 	
 	public float timeBetweenSquares = .25f;
-	
-	float squareAnimationTime;
 
 	// Use this for initialization
 	void Start () {
@@ -67,11 +65,8 @@ public class GameManager : MonoBehaviour {
 				yIndex = 0;
 				xIndex++;
 			}
-			
 		}
-		
-		squareAnimationTime = squares[0].GetComponent<Square>().squareAnimationTime;
-		
+
 		StartLevel();
 	}
 	
@@ -111,7 +106,7 @@ public class GameManager : MonoBehaviour {
 		}
 		
 		for (int i = 0; i < currentSquares.Count; i++) {
-			currentSquares[i].GetComponent<Square>().StartCoroutine(currentSquares[i].GetComponent<Square>().Setup(i, i * timeBetweenSquares));
+			currentSquares[i].GetComponent<Square>().SetSquareActive(i, i * timeBetweenSquares);
 		}
 		 
 		Invoke("SetSquaresActive", timeBetweenSquares * numSquares);
@@ -134,33 +129,15 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 	
-//	void ShakeGrid() {
-//		Vector2 squareIndex = Vector2.zero;
-//		
-//		for(int i = 0; i < 4; i++) {
-//			for(int j = 0; j < 4; j++) {
-//				if(grid[i, j] == currentSquares[0]) {
-//					squareIndex = new Vector2(i, j);
-//				}
-//			}
-//		}
-//		
-//		for(int i = 0; i < 4; i++) {
-//			for(int j = 0; j < 4; j++) {
-//				if(!(i == squareIndex.x && j == squareIndex.y) && (i == squareIndex.x || j == squareIndex.y)) {
-//					float delayModifier = Mathf.Max(Mathf.Abs(squareIndex.x - i), Mathf.Abs(squareIndex.y - j))/2;
-//					
-//					grid[i, j].GetComponent<Square>().HandlePulse(currentSquares[0], delayModifier);
-//				}				
-//			}
-//		}
-//	}
-	
 	IEnumerator HandleLevelWin() {
 		audioManager.PlayEnd();
 		totalTime += Time.time - startTime;
-		
-		yield return new WaitForSeconds(squareAnimationTime);
+
+		while(!AllSquaresReady()) {
+			yield return 0;
+		}
+//		yield return new WaitUntil(AllSquaresReady());
+
 		scoreManager.HandleLevelComplete();
 		yield return new WaitForSeconds(scoreManager.totalTransitionTime);
 		numSquares++;
@@ -170,6 +147,15 @@ public class GameManager : MonoBehaviour {
 		} else {
 			HandleGameWon();
 		}
+	}
+
+	bool AllSquaresReady() {
+		for (int i = 0; i < squares.Length; i++) {
+			if(!squares[i].GetComponent<Square>().isReady) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public void HandleGameOver() {		

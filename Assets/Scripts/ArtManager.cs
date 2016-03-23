@@ -30,9 +30,7 @@ public class ArtManager : MonoBehaviour {
 			IterateArtPack();
 			currentPackName = currentArtPack.name;
 		}
-
 	}
-
 
 	void IterateArtPack() {
 		artPackIndex++;
@@ -41,5 +39,9 @@ public class ArtManager : MonoBehaviour {
 		}
 
 		currentArtPack = artPacks[artPackIndex];
+	}
+
+	public Color RandomColor() {
+		return colors[Random.Range(0, colors.Length)];
 	}
 }

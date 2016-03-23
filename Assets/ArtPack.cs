@@ -12,4 +12,5 @@ public class ArtPack : MonoBehaviour {
 
 	public bool useBackground;
 	public bool randomizeColor;
+	public bool useAnimation;
 }
