@@ -17,9 +17,15 @@ public class ArtManager : MonoBehaviour {
 	public string currentPackName;
 
 	public int artPackIndex = 1;
+	public bool debugArtIndex;
 
 	// Use this for initialization
 	void Awake () {
+
+		if(!debugArtIndex) {
+			artPackIndex = PlayerPrefs.GetInt("currentArtIndex");
+		}
+
 		artPacks = GetComponents<ArtPack>();
 		currentArtPack = artPacks[artPackIndex];
 	}
@@ -32,13 +38,14 @@ public class ArtManager : MonoBehaviour {
 		}
 	}
 
-	void IterateArtPack() {
+	public void IterateArtPack() {
 		artPackIndex++;
 		if (artPackIndex >= artPacks.Length) {
 			artPackIndex = 0;
 		}
 
 		currentArtPack = artPacks[artPackIndex];
+		PlayerPrefs.SetInt("currentArtIndex", artPackIndex);
 	}
 
 	public Color RandomColor() {

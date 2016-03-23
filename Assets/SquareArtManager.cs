@@ -42,10 +42,12 @@ public class SquareArtManager : MonoBehaviour {
 	}
 
 	public void SetRandomColor() {
-		if(artManager.currentArtPack.randomizeColor) {
-			spriteRenderer.color = artManager.RandomColor();
-		} else {
-			spriteRenderer.color = Color.white;
+		if(layer == Layer.foreground) {
+			if(artManager.currentArtPack.randomizeColor) {
+				spriteRenderer.color = artManager.RandomColor();
+			} else {
+				spriteRenderer.color = Color.white;
+			}
 		}
 	}
 
